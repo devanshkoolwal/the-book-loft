@@ -8,17 +8,12 @@ var userBook=require("./models/bookuser");
 var passport = require("passport");
 var LocalStrategy= require("passport-local");
 var User = require("./models/user");
-var unirest = require("unirest");
 methodOverride=require("method-override");
 var Comment=require("./models/comment");
 var partials=require("express-partials");
 const { render } = require("ejs");
-const pricefinder = require('pricefinder-ecommerce');
-const PriceFinder = require('price-finder');
-const priceFinder = new PriceFinder();
 var axios=require('axios');
 var cherrio=require('cheerio');
-const rp = require('request-promise');
 flash=require("connect-flash");
 //customer-reviews-content id
 
@@ -32,8 +27,6 @@ app.set("view engine" , "ejs");
 app.use(methodOverride("_method"));
 app.use(express.static(__dirname+"/public"));
 app.use(flash());
-
-app.use(partials());
 
 
 app.use(require("express-session")({
@@ -104,7 +97,7 @@ app.use(function (req,res,next){
                     res.render("book", {book:foundBook, fPrice: FlipkartPrice, aPrice: AmazonPrice })
                     // return AmazonPrice;
                 }
-                var price=aaa();
+                aaa();
                 
                 
                 
@@ -128,10 +121,6 @@ app.use(function (req,res,next){
         
     });
 
-    async function aaa(){
-        
-    }
-
 
     app.get("/category/:category", function(req,res){
         Book.find({genre: req.params.category}, function(err,foundBook){
@@ -154,7 +143,7 @@ app.use(function (req,res,next){
         res.render("launch");
     });
 
-    app.post("/launch",function(req,res){
+    app.post("/launch", isLoggedIn,function(req,res){
         userBook.create(req.body.bookuser, function(err, createdBook){
             if(err)
                 console.log(err);
@@ -360,10 +349,6 @@ function checkCommentOwnership(req,res,next){
 
 };
 
-app.get("/check", function(req,res){
-    res.render("check");
-});
-
 app.get("/search", function(req,res){
     if(req.query.search){
         const regex = new RegExp(escapeRegex(req.query.search), 'gi');
@@ -391,7 +376,7 @@ function checkAdmin(req,res,next){
             next();
         }
         else{
-            req.flash("error","You need to be logged in to do that");
+            req.flash("error","You are not Allowed");
             res.redirect("/");
         }
 
@@ -437,7 +422,7 @@ async function scrapePageAmazon(productURL) {
   async function getFlipkartPrice(html) {
     const $ = cherrio.load(html)
     
-    const span = $('._3qQ9m1')
+    const span = $('._30jeq3')
     return span.html();
   }
   
