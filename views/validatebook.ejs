@@ -13,6 +13,7 @@
                 <table class="table table-striped table-dark table-bordered m-2" >
                     <tr>
                         <th>id</th>
+                        <th>Submitted by</th>
                         <th>name</th>
                         <th>author</th>
                         <th>publisher</th>
@@ -38,6 +39,7 @@
                     <tr>  
                         <form action="/validatebook" method="POST">
                         <td class="hidden"><input type="text" value="<%= book._id %>" name="bookid"></td> 
+                        <td class="hidden"><input type="text" value="<%= book.submittedby %>" name="newbook[submittedby]"></td> 
                         <td><input type="text" value="<%=book.name %>" name="newbook[name]"></td> 
                         <td><input type="text" value="<%=book.author %>" name="newbook[author]"></td> 
                         <td><input type="text"  value="<%=book.publisher %>" name="newbook[publisher]"></td>
@@ -55,7 +57,7 @@
                         <td><input type="text" name="newbook[keepa_link]"></td>
                         <td><button>Submit</button></td> 
                         </form>
-                        <form action="">
+                        <form action="/validatebook/<%= book._id%>" method="POST">
                         <td><button>Delete</button></td> 
                         </form>
                     

@@ -65,6 +65,7 @@ app.get("/", function (req, res) {
         else {
 
             res.render("index", { books: allBooks });
+      
         }
     })
 
@@ -134,7 +135,19 @@ async function aaa() {
 
 app.get("/user/:user", function (req, res) {
 
-    res.render("user");
+    User.findById({ _id: req.params.user }, function (err, FU) {
+        if (err)
+            console.log(err);
+        else{
+             
+            
+
+            res.render("user", { userD: FU });
+        
+
+        }
+            
+    })
 
 });
 
@@ -142,8 +155,10 @@ app.get("/category/:category", function (req, res) {
     Book.find({ genre: req.params.category }, function (err, foundBook) {
         if (err)
             console.log(err);
-        else
+        else{
+            
             res.render("index", { books: foundBook });
+        }
     })
 });
 app.get("/language/:language", function (req, res) {
@@ -160,7 +175,10 @@ app.get("/launch", isLoggedIn, function (req, res) {
 });
 
 app.post("/launch", function (req, res) {
-    userBook.create(req.body.bookuser, function (err, createdBook) {
+    var booku=req.body.bookuser;
+    Object.assign(booku,{submittedby: req.user._id});
+
+    userBook.create(booku, function (err, createdBook) {
         if (err)
             console.log(err);
         else {
@@ -195,7 +213,7 @@ app.post("/validatebook", function (req, res) {
             console.log(err);
         }
         else {
-            console.log(req.body.newbook);
+           
             userBook.findByIdAndRemove(req.body.bookid, function (err) {
 
                 res.redirect("validatebook");
@@ -204,6 +222,12 @@ app.post("/validatebook", function (req, res) {
         }
     });
 });
+
+app.post("/validatebook/:bookid",function(req,res){
+    userBook.findOneAndDelete( req.params.bookid,function(err){
+        res.redirect("/");
+    })
+})
 
 
 
@@ -216,7 +240,7 @@ app.get("/register", function (req, res) {
 });
 
 app.post("/register", function (req, res) {
-    var newUser = new User({ username: req.body.username });
+    var newUser = new User({ username: req.body.username , name:req.body.name});
     User.register(newUser, req.body.password, function (err, user) {
         if (err) {
             // req.flash("error", err.message);
@@ -224,7 +248,7 @@ app.post("/register", function (req, res) {
             return res.render("signup");
         }
         passport.authenticate("local")(req, res, function () {
-            req.flash("success", "Welcome to The Book Loft");
+            req.flash("success", "Hi, Welcome to The Book Loft");
             res.redirect("/");
         })
     })

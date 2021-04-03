@@ -21,7 +21,8 @@ var BookSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Comment"
         }
-    ]
+    ],
+    submittedby: String
 });
 
 module.exports = mongoose.model("Book",BookSchema);

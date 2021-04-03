@@ -24,7 +24,8 @@ var BookSchema = mongoose.Schema({
     ebook_link:{
         type: String,
         default:0
-    }
+    },
+    submittedby:String
 });
 
 module.exports = mongoose.model("userbook",BookSchema);
